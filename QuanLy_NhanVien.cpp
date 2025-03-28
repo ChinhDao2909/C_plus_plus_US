@@ -77,7 +77,14 @@ public:
     int getWorkingHours() const { return workingHours; }
 
     // Setters
-    void setID(const string& newID) { employeeID = newID; }
+    void setID(const string& newID) 
+    { 
+        // Định dạng mã nhân viên
+        stringstream ss;
+        ss << setw(3) << setfill('0') << newID;
+        string ID_Formatted = ss.str();
+		employeeID = ID_Formatted;
+    }
     void setName(const string& newName) {name = newName; }
     void setSalary(double newSalary) { salary = newSalary; }
     void setPosition(const string& newPos) { position = newPos; }
@@ -261,18 +268,21 @@ public:
     {
         for (const auto& emp : ds_nhanvien)
         {
-            string ID_temp = emp.getID();
-            if (stoi(ID_temp.substr(2)) == ID)
+            if (stoi(emp.getID()) == ID)
                 return true;
         }
         return false;
     }
 
-    int SreachIndexEmployeeByID(const string ID)
+    int SreachIndexEmployeeByID(const string ID_so)
     {
+        // Định dạng mã nhân viên
+        stringstream ss;
+        ss << setw(3) << setfill('0') << ID_so;
+        string ID_Formatted = ss.str();
         for (int i = 0; i < ds_nhanvien.size(); i++)
         {
-            if (ds_nhanvien[i].getID() == ID)
+            if (ds_nhanvien[i].getID() == ID_Formatted)
                 return i;
         }
         return -1;
@@ -310,36 +320,41 @@ public:
         while (true) {
             bool check = false;
             cout << "Nhap ma nhan vien (toi da 3 so): ";
-            getline(cin, maNhanVienSo_ToStr);
-            if (!maNhanVienSo_ToStr.empty()) // Kiểm tra nếu không nhâp thì bỏ qua
+            getline(cin, ID);
+            if (!ID.empty()) // Kiểm tra nếu không nhâp thì bỏ qua
             {
-				for (char c : maNhanVienSo_ToStr) // Kieemr tra xem có phải số không
+				for (char c : ID) // Kieemr tra xem có phải số không
 				{
 					if (isalpha(c))
 					{
-						cout << "Ma nhan vien khong hop le. Vui long nhap lai." << endl;
+						cout << "Ma nhan vien khong chua ky tu. Vui long nhap lai." << endl;
 						check = true;
                         break;
 					}
 				}
                 if (!check)
                 {
-                    maNhanVienSo = stoi(maNhanVienSo_ToStr);
-                    if ((maNhanVienSo) >= 1 && (maNhanVienSo) <= 999) {
-                        if (CheckDuplicateID(maNhanVienSo))
+                    if (stoi(ID) >= 1 && stoi(ID) <= 999) {
+                        if (CheckDuplicateID(stoi(ID)))
                         {
                             cout << "Ma nhan vien da ton tai. Vui long nhap lai." << endl;
                         }
                         else
+                        {
+							ds_nhanvien[viTri].setID(ID);
                             break;
+                        }
                     }
                     else
                     {
-                        cout << "Ma nhan vien khong hop le. Vui long nhap lai." << endl;
+                        cout << "Ma nhan vien qua lon. Vui long nhap lai." << endl;
                     }
                 }
             }
-            else break;
+            else
+            {
+                break;
+            }
         }
 
         // Nhập tên mới
@@ -422,24 +437,6 @@ public:
 
         }
 
-		// Định dạng mã nhân viên
-        if (!maNhanVienSo_ToStr.empty())
-        {
-            stringstream ss;
-            string pos_temp = ds_nhanvien[viTri].getPosition();
-            ss << setw(3) << setfill('0') << maNhanVienSo;
-            string maNhanVienFormatted = ss.str();
-            if (pos_temp == "Nhân viên")
-            {
-				ID = "NL" + maNhanVienFormatted;
-            }
-            else
-            {
-                ID = "QL" + maNhanVienFormatted;
-            }
-			ds_nhanvien[viTri].setID(ID);
-        }
-
         cout << "Sua thong tin nhan vien thanh cong!" << endl;
         WriteToFile();
     }
@@ -447,7 +444,7 @@ public:
 	void SreachEmployeeByID()
 	{
 		string ID_sreach;
-		cout << "Nhap ma nhan vien can tim: ";
+		cout << "Nhap ma nhan vien can tim (nhap so) : ";
 		cin >> ID_sreach;
 		cin.ignore();
 		// Tìm kiếm nhân viên trong danh sách
@@ -465,7 +462,7 @@ public:
 	void RemoveEmployeeByID()
 	{
 		string ID_sreach;
-		cout << "Nhap ma nhan vien can xoa: ";
+		cout << "Nhap ma nhan vien can xoa (nhap so): ";
 		cin >> ID_sreach;
 		cin.ignore();
 		// Tìm kiếm nhân viên trong danh sách
@@ -496,7 +493,7 @@ int main() {
 		system("cls");
         cout << "============ Quan ly nhan vien ============\n"
              << "1. Them nhan vien\n"
-             << "2. Cap nhat thong tin nhan vien\n" 
+             << "2. Cap nhat thong tin nhan vien\n"
              << "3. Hien thi danh sach nhan vien\n"
              << "4. Tim nhan vien theo ID\n"
              << "5. Xoa nhan vien theo ID\n"
