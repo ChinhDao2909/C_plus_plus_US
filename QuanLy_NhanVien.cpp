@@ -504,10 +504,10 @@ int main() {
         cin >> chon;
         cin.ignore();
 
-        if (cin.fail())
+		if (cin.fail())  // Trả về giá trị true nếu lần nhập trước thất bại
         {
-			cin.clear();
-			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			cin.clear(); // Xoá cờ lỗi
+			cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Loại bỏ dữ liệu lỗi
 			cout << "Lua chon khong hop le. Vui long nhap lai!\n";
             cout << "\nAN Enter de quay lai man hinh chon....";
             cin.get();
