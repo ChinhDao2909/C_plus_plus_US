@@ -20,12 +20,12 @@ private:
     string employeeID;
     string name;
     string position;
-    double salary;
+    string salary;
     int workingHours;
 
 public:
     // Constructor
-    Employee(string id = "", string n = "", string pos = "", double sal = 0.0, int hours = 0)
+    Employee(string id = "", string n = "", string pos = "", string sal = "", int hours = 0)
         : employeeID(id), name(n), position(pos), salary(sal), workingHours(hours) {
     }
     
@@ -65,17 +65,156 @@ public:
             << setw(20) << name
             << setw(15) << position
             << right
-            << setw(12) << fixed << setprecision(0) << salary
+            << setw(12) << salary
             << setw(10) << workingHours
             << endl;
     }
 
+	// Phương thức kiểm tra thông tin nhập vào
+    bool checkInputID(string ID)
+    {
+        if (ID.empty()) // Kiểm tra xem có bỏ trống không
+        {
+            cout << "Ma nhan vien khong duoc de trong. Vui long nhap lai." << endl;
+            return false;
+        }
+        for (char c : ID) // Kiểm tra xem có phải số không
+        {
+            if (isalpha(c))
+            {
+                cout << "Ma nhan vien khong chua ky tu. Vui long nhap lai." << endl;
+                return false;
+            }
+        }
+        if (stoi(ID) >= 1 && stoi(ID) <= 999) // Kiểm tra xem có trong khoảng không
+        {
+            return true;
+        }
+        else
+        {
+            cout << "Ma nhan vien chi tu (1 -> 999). Vui long nhap lai." << endl;
+            return false;
+        }
+    }
+
+    bool checkInputName(string name)
+    {
+        if (name.empty()) // Kiểm tra xem có bỏ trống không
+        {
+            cout << "Ho ten khong duoc de trong. Vui long nhap lai." << endl;
+            return false;
+        }
+        for (char c : name) // Kiểm tra xem có phải chữ không
+        {
+            if (isdigit(c))
+            {
+                cout << "Ten khong chua so. Vui long nhap lai." << endl;
+                return false;
+            }
+        }
+        if (name.length() > 35)
+        {
+            cout << "Ho ten qua dai. Vui long nhap lai." << endl;
+            return false;
+        }
+        return true;
+    }
+
+    bool checkInputPosition(string pos)
+    {
+        if (pos.empty()) // Kiểm tra xem có bỏ trống không
+        {
+            cout << "Chuc vu khong duoc de trong. Vui long nhap lai." << endl;
+            return false;
+        }
+        if (pos == "NV" || pos == "QL")
+            return true;
+        else
+        {
+            cout << "Chuc vu khong hop le. Vui long nhap lai." << endl;
+            return false;
+        }
+    }
+
+    bool checkInputSalary(string &salary)
+    {
+        if (salary.empty()) // Kiểm tra xem có bỏ trống không
+        {
+            cout << "Luong khong duoc de trong. Vui long nhap lai." << endl;
+            return false;
+        }
+        for (char c : salary) // Kiểm tra xem có phải số không
+        {
+            if (isalpha(c))
+            {
+                cout << "Luong khong chua ky tu. Vui long nhap lai." << endl;
+                return false;
+            }
+        }
+		removeSpace(salary); // Xóa khoảng trắng
+        if (stod(salary) >= 0 && stod(salary) <= 20000000) // Kiểm tra xem có trong khoảng không
+        {
+            return true;
+        }
+        else
+        {
+            cout << "Luong chi tu (0 -> 20,000,000). Vui long nhap lai." << endl;
+            return false;
+        }
+    }
+
+    bool checkInputWorkingHours(string workingHours)
+    {
+        if (workingHours.empty()) // Kiểm tra xem có bỏ trống không
+        {
+            cout << "So gio lam khong duoc de trong. Vui long nhap lai." << endl;
+            return false;
+        }
+        for (char c : workingHours) // Kiểm tra xem có phải số không
+        {
+            if (isalpha(c))
+            {
+                cout << "So gio lam khong chua ky tu. Vui long nhap lai." << endl;
+                return false;
+            }
+        }
+        if (stoi(workingHours) >= 0 && stoi(workingHours) <= 12) // Kiểm tra xem có trong khoảng không
+        {
+            return true;
+        }
+        else
+        {
+            cout << "So gio lam chi tu (0 -> 12). Vui long nhap lai." << endl;
+            return false;
+        }
+    }
+
+    // Xử lý dữ liệu lương
+    void removeSpace(string& salary)
+    {
+		salary.erase(remove(salary.begin(), salary.end(), ' '), salary.end());
+    }
+
+	void fomatSalary(string& salary)
+	{
+        string result;
+        int count = 0;
+		int i = salary.length() - 1;
+        for (i; i >= 0; --i) {
+            result = salary[i] + result;
+            count++;
+            if (count % 3 == 0 && i != 0) {
+                result = " " + result;
+            }
+        }
+		salary = result;
+	}
 
     // Getters
     string getID() const { return employeeID; }
     string getName() const { return name; }
     string getPosition() const { return position; }
-    double getSalary() const { return salary; }
+    string getSalary() const { return salary; }
     int getWorkingHours() const { return workingHours; }
 
     // Setters
@@ -88,8 +227,21 @@ public:
 		employeeID = ID_Formatted;
     }
     void setName(const string& newName) {name = newName; }
-    void setSalary(double newSalary) { salary = newSalary; }
-    void setPosition(const string& newPos) { position = newPos; }
+    void setSalary(string newSalary) 
+    {
+		fomatSalary(newSalary);
+        salary = newSalary; 
+    }
+    void setPosition(const string& newPos) 
+    { 
+        // Định dạng lại chức vụ
+        if (newPos == "NV") {
+            position = "Nhan vien";
+        }
+        else {
+            position = "Quan ly";
+        }
+    }
     void setWorkingHours(int hours) { workingHours = hours; }
 
 };
@@ -111,18 +263,17 @@ public:
         string line;
         while (getline(file, line)) {
             stringstream ss(line);
-            string id, name, pos, salStr, hoursStr;
+            string id, name, pos, sal, hoursStr;
 
             getline(ss, id, ',');
             getline(ss, name, ',');
             getline(ss, pos, ',');
-            getline(ss, salStr, ',');
+            getline(ss, sal, ',');
             getline(ss, hoursStr);
 
             try {
-                double salary = stod(salStr);
                 int hours = stoi(hoursStr);
-                ds_nhanvien.emplace_back(id, name, pos, salary, hours);
+                ds_nhanvien.emplace_back(id, name, pos, sal, hours);
             }
             catch (const exception& e) {
                 cerr << "Error parsing data: " << e.what() << endl;
@@ -149,7 +300,7 @@ public:
             file << emp.getID() << ","
                 << emp.getName() << ","
                 << emp.getPosition() << ","
-                << fixed << setprecision(0) << emp.getSalary() << ","
+                << emp.getSalary() << ","
                 << emp.getWorkingHours() << "\n";
         }
 
@@ -160,7 +311,8 @@ public:
 	{
         if (ds_nhanvien.size() > 1)
         {
-            sort(ds_nhanvien.begin(), ds_nhanvien.end(), [](const Employee& emp1, const Employee& emp2) {
+            sort(ds_nhanvien.begin(), ds_nhanvien.end(), [](const Employee& emp1, const Employee& emp2) 
+                {
                 return stoi(emp1.getID()) < stoi(emp2.getID());
                 });
         }
@@ -176,135 +328,15 @@ public:
         }
     }
 
-    bool checkInputID(string ID)
-    {
-		if (ID.empty()) // Kiểm tra xem có bỏ trống không
-		{
-			cout << "Ma nhan vien khong duoc de trong. Vui long nhap lai." << endl;
-			return false;
-		}
-		for (char c : ID) // Kiểm tra xem có phải số không
-        {
-            if (isalpha(c))
-            {
-                cout << "Ma nhan vien khong chua ky tu. Vui long nhap lai." << endl;
-                return false;
-            }
-        }
-		if (stoi(ID) >= 1 && stoi(ID) <= 999) // Kiểm tra xem có trong khoảng không
-        {
-			if (checkDuplicateID(stoi(ID))) // Kiểm tra xem có trùng không
-            {
-                cout << "Ma nhan vien da ton tai. Vui long nhap lai." << endl;
-                return false;
-            }
-            else
-                return true;
-        }
-        else
-        {
-            cout << "Ma nhan vien chi tu (1 -> 999). Vui long nhap lai." << endl;
-            return false;
-        }
-    }
-
-	bool checkInputName(string name)
-	{
-		if (name.empty()) // Kiểm tra xem có bỏ trống không
-		{
-			cout << "Ho ten khong duoc de trong. Vui long nhap lai." << endl;
-			return false;
-		}
-        for (char c : name) // Kiểm tra xem có phải chữ không
-        {
-            if (isdigit(c))
-            {
-                cout << "Ten khong chua so. Vui long nhap lai." << endl;
-                return false;
-            }
-        }
-		if (name.length() > 35)
-		{
-			cout << "Ho ten qua dai. Vui long nhap lai." << endl;
-			return false;
-		}
-		return true;
-	}
-
-	bool checkInputPosition(string pos)
-	{
-		if (pos.empty()) // Kiểm tra xem có bỏ trống không
-		{
-			cout << "Chuc vu khong duoc de trong. Vui long nhap lai." << endl;
-			return false;
-		}
-		if (pos == "NV" || pos == "QL")
-			return true;
-		else
-		{
-			cout << "Chuc vu khong hop le. Vui long nhap lai." << endl;
-			return false;
-		}
-	}
-
-	bool checkInputSalary(string salary)
-	{
-		if (salary.empty()) // Kiểm tra xem có bỏ trống không
-		{
-			cout << "Luong khong duoc de trong. Vui long nhap lai." << endl;
-			return false;
-		}
-        for (char c : salary) // Kiểm tra xem có phải số không
-        {
-			if (isalpha(c))
-			{
-				cout << "Luong khong chua ky tu. Vui long nhap lai." << endl;
-				return false;
-			}
-        }
-        if (stod(salary) >= 0 && stod(salary) <= 20000000) // Kiểm tra xem có trong khoảng không
-        {
-                return true;
-        }
-        else
-        {
-			cout << "Luong chi tu (0 -> 20,000,000). Vui long nhap lai." << endl;
-            return false;
-        }
-	}
-
-	bool checkInputWorkingHours(string workingHours)
-	{
-		if (workingHours.empty()) // Kiểm tra xem có bỏ trống không
-		{
-			cout << "So gio lam khong duoc de trong. Vui long nhap lai." << endl;
-			return false;
-		}
-		for (char c : workingHours) // Kiểm tra xem có phải số không
-		{
-			if (isalpha(c))
-			{
-				cout << "So gio lam khong chua ky tu. Vui long nhap lai." << endl;
-				return false;
-			}
-		}
-		if (stoi(workingHours) >= 0 && stoi(workingHours) <= 12) // Kiểm tra xem có trong khoảng không
-		{
-			return true;
-		}
-		else
-		{
-			cout << "So gio lam chi tu (0 -> 12). Vui long nhap lai." << endl;
-			return false;
-		}
-	}
-
     bool checkDuplicateID(const int ID)
     {
         for (const auto& emp : ds_nhanvien)
         {
             if (stoi(emp.getID()) == ID)
-                return true;
+            {
+				cout << "Ma nhan vien da ton tai. Vui long nhap lai." << endl;
+				return true;
+            }
         }
         return false;
     }
@@ -313,22 +345,19 @@ public:
         string employeeID;
         string name;
         string position;
-        double salary;
+        string salary;
         int workingHours;
+        Employee emp;
 
 		// Nhập ID nhân viên
         bool check = false;
-        string ID_temp;
         while (!check)
         {
             cout << "Nhap ma nhan vien (toi da 3 so): ";
-            getline(cin, ID_temp);
-            check = checkInputID(ID_temp);
+            getline(cin, employeeID);
+            check = emp.checkInputID(employeeID) and !checkDuplicateID(stoi(employeeID)) ;
         }
-        // Định dạng mã nhân viên
-        stringstream ss;
-        ss << setw(3) << setfill('0') << ID_temp;
-        employeeID = ss.str();
+
 
         // Nhập tên nhân viên
         check = false;
@@ -336,36 +365,27 @@ public:
 		{
 			cout << "Nhap ho ten (toi da 35 ky tu): ";
 			getline(cin, name);
-			check = checkInputName(name);
+			check = emp.checkInputName(name);
 		}
 
 		// Nhập chức vụ
         check = false;
-        string pos_temp;
         while (!check)
 		{
 			cout << "Nhap chuc vu (NV hoac QL): ";
-			getline(cin, pos_temp);
-			check = checkInputPosition(pos_temp);
+			getline(cin, position);
+			check = emp.checkInputPosition(position);
         }
-		// Định dạng lại chức vụ
-        if (pos_temp == "NV") {
-            position = "Nhan vien";
-        }
-        else {
-            position = "Quan ly";
-        }
+
 
         // Nhập lương
 		check = false;
-		string salary_temp;
 		while (!check)
 		{
 			cout << "Nhap luong (toi da 20,000,000 va khong am): ";
-			getline(cin, salary_temp);
-			check = checkInputSalary(salary_temp);
+			getline(cin, salary);
+			check = emp.checkInputSalary(salary);
 		}
-		salary = stod(salary_temp);
 
 		// Nhập số giờ làm
 		check = false;
@@ -374,11 +394,18 @@ public:
 		{
 			cout << "Nhap so gio lam (toi da 12): ";
 			getline(cin, workingHours_temp);
-			check = checkInputWorkingHours(workingHours_temp);
+			check = emp.checkInputWorkingHours(workingHours_temp);
 		}
 		workingHours = stoi(workingHours_temp);
         
-        ds_nhanvien.emplace_back(employeeID, name, position, salary, workingHours);
+		emp.setID(employeeID);
+		emp.setName(name);
+		emp.setPosition(position);
+		emp.setSalary(salary);
+		emp.setWorkingHours(workingHours);
+
+        ds_nhanvien.emplace_back(emp);
+
         WriteToFile();
     }
 
@@ -421,24 +448,20 @@ public:
         string employeeID;
         string name;
         string position;
-        double salary;
+        string salary;
         int workingHours;
+		Employee emp;
 
         // Nhập ID mới
-        string ID_temp; // Nhập bắng str để kiểm tra xem có bỏ trống không
 		bool check = false;
         while (!check) {
             cout << "Nhap ma nhan vien (toi da 3 so): ";
-            getline(cin, ID_temp);
-            if (!ID_temp.empty()) // Kiểm tra nếu không nhâp thì bỏ qua
+            getline(cin, employeeID);
+            if (!employeeID.empty()) // Kiểm tra nếu không nhâp thì bỏ qua
             {
-                check = checkInputID(ID_temp);
+                check = emp.checkInputID(employeeID) and !checkDuplicateID(stoi(employeeID));
                 if (check)
                 {
-                    // Định dạng mã nhân viên
-                    stringstream ss;
-                    ss << setw(3) << setfill('0') << ID_temp;
-                    employeeID = ss.str();
 					ds_nhanvien[viTri].setID(employeeID);
                 }
 			}
@@ -452,7 +475,7 @@ public:
 			getline(cin, name);
             if (!name.empty()) // Kiểm tra nếu không nhâp thì bỏ qua
             {
-                check = checkInputName(name);
+                check = emp.checkInputName(name);
                 if (check)
                 {
                     ds_nhanvien[viTri].setName(name);
@@ -463,21 +486,14 @@ public:
 
         // Nhập chức vụ mới
 		check = false;
-		string pos_temp;
         while (!check) {
             cout << "Nhap chuc vu (NV hoac QL): ";
-            getline(cin, pos_temp);
-            if (!pos_temp.empty()) // Kiểm tra nếu không nhâp thì bỏ qua
+            getline(cin, position);
+            if (!position.empty()) // Kiểm tra nếu không nhâp thì bỏ qua
             {
-                check = checkInputPosition(pos_temp);
+                check = emp.checkInputPosition(position);
                 if (check)
                 {
-                    if (pos_temp == "NV") {
-                        position = "Nhan vien";
-                    }
-                    else {
-                        position = "Quan ly";
-                    }
                     ds_nhanvien[viTri].setPosition(position);
                 }
             }
@@ -486,16 +502,14 @@ public:
 
         // Nhập số lương mới
 		check = false;
-		string salary_Temp;
 		while (!check) {
 			cout << "Nhap luong (toi da 20,000,000 va khong am): ";
-			getline(cin, salary_Temp);
-			if (!salary_Temp.empty()) // Kiểm tra nếu không nhâp thì bỏ qua
+			getline(cin, salary);
+			if (!salary.empty()) // Kiểm tra nếu không nhâp thì bỏ qua
 			{
-				check = checkInputSalary(salary_Temp);
+				check = emp.checkInputSalary(salary);
 				if (check)
 				{
-					salary = stod(salary_Temp);
 					ds_nhanvien[viTri].setSalary(salary);
 				}
 			}
@@ -510,7 +524,7 @@ public:
 			getline(cin, workingHours_temp);
 			if (!workingHours_temp.empty()) // Kiểm tra nếu không nhâp thì bỏ qua
 			{
-				check = checkInputWorkingHours(workingHours_temp);
+				check = emp.checkInputWorkingHours(workingHours_temp);
 				if (check)
 				{
 					workingHours = stoi(workingHours_temp);
@@ -646,8 +660,6 @@ static void menu_QL_NhanVien()
         }
     }
 }
-
-
 
 int main() {
     menu_QL_NhanVien();
