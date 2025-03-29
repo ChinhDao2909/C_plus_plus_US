@@ -112,7 +112,7 @@ public:
                 return false;
             }
         }
-        if (name.length() > 35)
+        if (name.length() > 30)
         {
             cout << "Ho ten qua dai. Vui long nhap lai." << endl;
             return false;
@@ -199,8 +199,7 @@ public:
 	{
         string result;
         int count = 0;
-		int i = salary.length() - 1;
-        for (i; i >= 0; --i) {
+        for (int i = salary.length() - 1; i >= 0; --i) {
             result = salary[i] + result;
             count++;
             if (count % 3 == 0 && i != 0) {
@@ -260,8 +259,14 @@ public:
             return;
         }
 
+        bool isFirstLine = true; // Thêm biến boolean để kiểm tra dòng đầu tiên
+
         string line;
         while (getline(file, line)) {
+            if (isFirstLine) {
+                isFirstLine = false;
+                continue; // Bỏ qua dòng đầu tiên
+            }
             stringstream ss(line);
             string id, name, pos, sal, hoursStr;
 
@@ -295,6 +300,7 @@ public:
         }
 
 		SortByID();
+		file << "Ma NV,Ten,Chuc vu,Luong,Gio lam\n";
 
         for (const auto& emp : ds_nhanvien) {
             file << emp.getID() << ","
@@ -363,7 +369,7 @@ public:
         check = false;
 		while (!check)
 		{
-			cout << "Nhap ho ten (toi da 35 ky tu): ";
+			cout << "Nhap ho ten (toi da 30 ky tu): ";
 			getline(cin, name);
 			check = emp.checkInputName(name);
 		}
@@ -471,7 +477,7 @@ public:
         // Nhập tên mới
 		check = false;
 		while (!check) {
-			cout << "Nhap ho ten (toi da 35 ky tu): ";
+			cout << "Nhap ho ten (toi da 30 ky tu): ";
 			getline(cin, name);
             if (!name.empty()) // Kiểm tra nếu không nhâp thì bỏ qua
             {
@@ -650,6 +656,7 @@ static void menu_QL_NhanVien()
                 break;
             case 8:
                 cout << "Thoat chuong trinh\n";
+				ql.WriteToFile();
                 break;
             default:
                 cout << "Lua chon khong hop le. Vui long nhap lai!\n";
